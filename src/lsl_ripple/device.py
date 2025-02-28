@@ -7,22 +7,20 @@ import xipppy as xp
 
 
 CLOCK_RATE = 30_000
-STREAM_RATES: dict = {
-    "raw": CLOCK_RATE,
-    "hi-res": 2_000,
-    "lfp": 1_000
-}
+STREAM_RATES: dict = {"raw": CLOCK_RATE, "hi-res": 2_000, "lfp": 1_000}
 
 
 class RippleDevice:
     def __init__(
-            self,
-            targ_stream_type: str = "hi-res",  # for now only supporting raw, hi-res, lfp
-            fetch_delay: float = 0.004,
+        self,
+        targ_stream_type: str = "hi-res",  # for now only supporting raw, hi-res, lfp
+        fetch_delay: float = 0.004,
     ):
         if targ_stream_type not in STREAM_RATES:
-             raise Exception(f"Stream types other than {STREAM_RATES.keys()} are not supported")
-        
+            raise Exception(
+                f"Stream types other than {STREAM_RATES.keys()} are not supported"
+            )
+
         self._targ_st = targ_stream_type
         self._fetch_delay = fetch_delay
         try:
@@ -34,7 +32,9 @@ class RippleDevice:
                 tcp_mode = xp._open(use_tcp=True)
                 print("Connected through TCP")
             except:
-                raise Exception("Could not connect to processor. \nMake sure power LED is connected and try again")
+                raise Exception(
+                    "Could not connect to processor. \nMake sure power LED is connected and try again"
+                )
 
         # For each electrode, enable only the target stream, disable all others
         electrode_ids = xp.list_elec("all")
@@ -83,11 +83,17 @@ class RippleDevice:
         data, timestamp = None, 0
         if fetch_points > 0:
             if self._targ_st == "raw":
-                data, timestamp = xp.cont_raw(fetch_points, self._elec_ids, start_timestamp=self._t0)
+                data, timestamp = xp.cont_raw(
+                    fetch_points, self._elec_ids, start_timestamp=self._t0
+                )
             elif self._targ_st == "hi-res":
-                data, timestamp = xp.cont_hires(fetch_points, self._elec_ids, start_timestamp=self._t0)
+                data, timestamp = xp.cont_hires(
+                    fetch_points, self._elec_ids, start_timestamp=self._t0
+                )
             elif self._targ_st == "lfp":
-                data, timestamp = xp.cont_lfp(fetch_points, self._elec_ids, start_timestamp=self._t0)
+                data, timestamp = xp.cont_lfp(
+                    fetch_points, self._elec_ids, start_timestamp=self._t0
+                )
             else:
                 raise Exception(f"Unsupported ripple stream type: {self._targ_st} ")
 
@@ -99,7 +105,9 @@ class RippleDevice:
             data = np.ascontiguousarray(data.T)
             if data.shape[0] > 0:
                 if data.shape[0] != fetch_points:
-                    raise Exception("API returned unexpected number of points. Data missing.")
+                    raise Exception(
+                        "API returned unexpected number of points. Data missing."
+                    )
                 self._t0 += int(fetch_points * CLOCK_RATE / self.srate)
                 timestamp = self._t0
 
