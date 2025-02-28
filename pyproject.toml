@@ -1,0 +1,23 @@
+[project]
+name = "lsl-ripple"
+dynamic = ["version"]
+description = "Application to stream data from Ripple Trellis over LabStreamingLayer"
+readme = "README.md"
+authors = [
+    { name = "Chadwick Boulay", email = "chadwick.boulay@gmail.com" }
+]
+requires-python = ">=3.9,<3.12"
+dependencies = []
+
+[project.scripts]
+lsl-ripple = "lsl_ripple.cli:main"
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/lsl_ripple/__version__.py"
